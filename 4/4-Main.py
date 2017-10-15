@@ -6,7 +6,7 @@
     File name: AutoScrabbleMain.py
     Date created: 20/09/2017
     Date last modified: 26/09/2017
-    Python Version: 3.5
+    Python version: 3.5
 '''
 
 
