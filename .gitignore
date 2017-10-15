@@ -339,3 +339,5 @@ Temporary Items
 *.pyo
 build/
 dist/
+
+*.PNG
