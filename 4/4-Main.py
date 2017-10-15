@@ -14,7 +14,7 @@
 import AutoScrabbleModul
 
 #Einlesen der Datei mit allen Kürzeln
-kuerzel = [line.rstrip('\n') for line in open('AutoScrabbleKuerzelliste.txt')]
+kuerzel = [line.rstrip('\n') for line in open('4-Kuerzelliste.txt')]
 
 #Eingabe der Wörter
 wort = str(input("Worteingabe: "))
