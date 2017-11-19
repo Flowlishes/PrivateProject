@@ -69,9 +69,20 @@ def split_namen(text):
 
 def zimmer_negativliste(zimmernegativ, hate_list, index):
     #Iteration durch bereits bestehende Liste, um Doppelnennungen zu vermeiden
+    #Namen einer Person zu Negativliste eines Zimmers
     for k in hate_list[index]:
         if k not in zimmernegativ:
             zimmernegativ.append(k)
+    return(zimmernegativ)
+
+def negativlisten_zusammenfuehren(zimmernegativliste, x, zimmernegativ):
+    #Iteration durch die bereits bestehenden Negativlisten (aktuelles Zimmer, Wunschzimmer)
+    #Negativliste eines Zimmers in andere Negativliste übertragen
+    for k in zimmernegativliste[x]:
+        if k not in zimmernegativ:
+            zimmernegativ.append(k)
+    #Entfernen der übertragenen Negativliste
+    del zimmernegativliste[x]
     return(zimmernegativ)
 
 def person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ):
@@ -88,14 +99,33 @@ def person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegat
     aktuellelike_list = like_list[index]
     del like_list[index]
 
-    #Falls Leute in Wunschliste
+    #Falls Leute in Wunschliste:
     if len(aktuellelike_list) != 0:
-        #Druchgehen der Wünsche
+        #Boolescher Wert für die Personensuche innerhalb der Zimmer nötig
+        gefunden = False
+        #Durchgehen der Wünsche
         for a in aktuellelike_list:
             name = a
-            #Wünsche nur hinzufügen, sofern sie nicht bereits im Zimmer sind
+            #Nur hinzufügen, wenn Person noch nicht im gleichen Zimmer ist
             if name not in zimmer:
-                person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ)
+                #Überprüfe, ob Name bereits in anderem Zimmer:
+                #Liste aller Zimmer
+                for x in range(0, len(zimmerliste)):
+                    #Zimmer innerhalb der Liste --> Leute in den Zimmern
+                    for s in zimmerliste[x]:
+                        if s == name:
+                            #Wunschperson bereits in einem anderen Zimmer gefunden
+                            #Zimmer werden zusammengeführt
+                            zimmer += zimmerliste[x]
+                            #Altes Zimmer aus Gesamtliste gelöscht
+                            del zimmerliste[x]
+                            #Gemeinsame Negativliste der beiden Zimmer erstellen
+                            zimmernegativ = negativlisten_zusammenfuehren(zimmernegativliste, x, zimmernegativ)
+                            #Person über Zimmer gefunden, muss nicht mehr einzeln hinzugefügt werden
+                            gefunden = True
+                #Person wird einzeln hinzugefügt, da in keinem Zimmer gefunden
+                if gefunden == False:
+                    person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ)
 
 
 datei_einlesen()
