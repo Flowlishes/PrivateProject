@@ -1,11 +1,10 @@
-"""!/usr/bin/python
--*- coding: UTF-8 -*-
-"""
+#!/usr/bin/env python
+# coding: utf8
 
 '''
-    File name: AutoScrabbleMain.py
+    File name: 4-Main.py
     Date created: 20/09/2017
-    Date last modified: 26/09/2017
+    Date last modified: 19/11/2017
     Python version: 3.5
 '''
 

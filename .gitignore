@@ -341,3 +341,5 @@ build/
 dist/
 
 *.PNG
+
+*.txt
