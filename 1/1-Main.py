@@ -33,7 +33,7 @@ max_personen = 0
 
 def datei_einlesen():
     #Testdateien werden in Listen geladen
-    file = open("1-beispiel-1.txt")
+    file = open("1-beispiel-2.txt")
     while True:
         #Datei wird Zeile für Zeile eingelesen
         name = file.readline().strip()
@@ -50,13 +50,10 @@ def datei_einlesen():
 def eingabe_liste(name, likes, hates):
     #Hinzufügen der eingelesenen Zeilen in passende Liste
 
-    global max_personen
-
     like_list.append(likes)
     hate_list.append(hates)
     personenliste.append(name)
 
-    max_personen += 1
 def split_namen(text):
     #Entfernen der Sonderzeichen am Anfang der Zeile, Leerzeichen
     #und Konvertierung zu einer Liste
