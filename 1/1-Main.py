@@ -40,12 +40,12 @@ def datei_einlesen():
         #Zwischenfunktion zum Entfernen der Leerzeichen und +/-
         likes = split_namen(file.readline().strip())
         hates = split_namen(file.readline().strip())
-
         if not file.readline():
             print(file.readline())
             break
-        #HInzufügen der Namen in passende Liste
+        #Hinzufügen der Namen in passende Liste
         eingabe_liste(name, likes, hates)
+
     file.close()
 def eingabe_liste(name, likes, hates):
     #Hinzufügen der eingelesenen Zeilen in passende Liste
@@ -93,43 +93,48 @@ def person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegat
         #Druchgehen der Wünsche
         for a in aktuellelike_list:
             name = a
-            person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ)
+            #Wünsche nur hinzufügen, sofern sie nicht bereits im Zimmer sind
+            if name not in zimmer:
+                person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ)
 
 
 datei_einlesen()
-print(personenliste)
+#print(personenliste)
 
-# i = 0
-# plus = True
-#
-# #Iteration durch eine sich verändernde Liste (keine for-Schleife möglich --> out of range)
-# while plus == True:
-#     #Aktuelle Person hat jemanden in ihrer like_list
-#     if len(like_list[i]) != 0:
-#         zimmer = []
-#         zimmernegativ = []
-#         name = personenliste[i]
-#
-#         person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ)
-#
-#         #print(zimmer)
-#         #print(personenliste)
-#         zimmerliste.append(zimmer)
-#         zimmernegativliste.append(zimmernegativ)
-#
-#         #Sonderfall: falls Ende der Liste, aber Person hat jemanden in ihrer +Liste
-#         #wird diese entfernt und das Objekt aus der Liste gelöscht, der Iterationsindex ist somit
-#         #größer als die Anzahl der Listenobjekte-1 und der Zeiger befindet sich außerhalb der Liste
-#         #folgende if-Abfrage unterbindet einen "out of range"-Fehler
-#         if i > (len(personenliste)-1):
-#             plus = False
-#         i = 0
-#         #print(personenliste)
-#
-#     #Person hat niemanden in ihrer like_list und das Ende der Personenlite ist erreicht
-#     elif (len(like_list[i]) == 0) and (i == (len(personenliste)-1)):
-#         plus = False
-#     #Keine Personen in like_list und noch kein Ende der Liste --> Erhöhung der
-#     #Iterationsvariablen um 1
-#     else:
-#         i += 1
+i = 0
+plus = True
+
+#Iteration durch eine sich verändernde Liste (keine for-Schleife möglich --> out of range)
+while plus == True:
+    #Aktuelle Person hat jemanden in ihrer like_list
+    if len(like_list[i]) != 0:
+        zimmer = []
+        zimmernegativ = []
+        name = personenliste[i]
+
+        #Person aus Wunschliste bereits woanders --> kein neues Zimmer?!
+
+        person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegativ)
+
+        zimmerliste.append(zimmer)
+        zimmernegativliste.append(zimmernegativ)
+
+        print(zimmerliste)
+
+
+        #Sonderfall: falls Ende der Liste, aber Person hat jemanden in ihrer +Liste
+        #wird diese entfernt und das Objekt aus der Liste gelöscht, der Iterationsindex ist somit
+        #größer als die Anzahl der Listenobjekte-1 und der Zeiger befindet sich außerhalb der Liste
+        #folgende if-Abfrage unterbindet einen "out of range"-Fehler
+        if i > (len(personenliste)-1):
+            plus = False
+        i = 0
+        #print(personenliste)
+
+    #Person hat niemanden in ihrer like_list und das Ende der Personenlite ist erreicht
+    elif (len(like_list[i]) == 0) and (i == (len(personenliste)-1)):
+        plus = False
+    #Keine Personen in like_list und noch kein Ende der Liste --> Erhöhung der
+    #Iterationsvariablen um 1
+    else:
+        i += 1
