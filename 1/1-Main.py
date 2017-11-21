@@ -36,13 +36,17 @@ index_delete = []
 #und das Programm fortfahren soll
 loesen = True
 
+#Varible, die für die gegenseitige Überprüfung zwischen den Personen und den nicht gewollten Personen
+#innerhalb eines Zimmers entspricht
+machbar = True
+
 #----------------------------
 #Einlesefunktionen
 #----------------------------
 
 def datei_einlesen():
     #Testdateien werden in Listen geladen
-    file = open("1-beispiel-6.txt")
+    file = open("1-beispiel-1.txt")
     while True:
         #Datei wird Zeile für Zeile eingelesen
         name = file.readline().strip()
@@ -86,8 +90,6 @@ def selbst_negativliste(personenliste, hate_list, loesen):
                 loesen = False
                 break
     return(loesen)
-
-
 
 def zimmer_negativliste(zimmernegativ, hate_list, index):
     #Iteration durch bereits bestehende Liste, um Doppelnennungen zu vermeiden
@@ -165,6 +167,22 @@ def person_zimmer(name, personenliste, like_list, hate_list, zimmer, zimmernegat
                         del zimmerliste[int(j)]
                         del zimmernegativliste[int(j)]
 
+#----------------------------
+#Überprüfungsfunktion
+#----------------------------
+
+def zimmernegativtest(zimmerliste, zimmernegativliste, machbar):
+    #Druchgehen aller Zimmer
+    for x in range(0, len(zimmerliste)):
+        #Durchgehen aller Personen in dem jeweiligen Zimmer
+        for z in zimmerliste[x]:
+            #Druchgehen der Negativliste
+            for s in zimmernegativliste[x]:
+                #Wenn ein Name innerhalb des Zimmers einem Namen innerhalb der Zimmernegativliste
+                #entspricht, sind die Wünsche der Kinder nicht erfüllbar
+                if s == z:
+                    machbar = False
+    return(machbar)
 
 #----------------------------
 #Einlesen und Vorüberprüfung
@@ -222,121 +240,127 @@ if loesen == True:
     #----------------------------
     #Bearbeitungschritt 2 - Vergabe aller Personen ohne Wünsche, aber mit Personen in ihrer hate_list
     #----------------------------
+    machbar = zimmernegativtest(zimmerliste, zimmernegativliste, machbar)
+    #Überprüfung der Zimmer auf ihre Negativlisten
+    if machbar == True:
 
-    l = 0
-    #Suche findet statt
-    minus = True
-    #Wenn die hate_list keine Leute mehr enthält, kann auch nach nichts gesucht werden
-    #--> Vermeidung von Lesefehlern
-    if not hate_list:
-        minus = False
+        l = 0
+        #Suche findet statt
+        minus = True
+        #Wenn die hate_list keine Leute mehr enthält, kann auch nach nichts gesucht werden
+        #--> Vermeidung von Lesefehlern
+        if not hate_list:
+            minus = False
 
-    #Variable, die den Beitrittszustand einer Person in Bezug auf ein Zimmer angibt
-    beitritt = False
+        #Variable, die den Beitrittszustand einer Person in Bezug auf ein Zimmer angibt
+        beitritt = False
 
-    #Iteration durch eine sich verändernde Liste (keine for-Schleife möglich --> out of range)
-    while minus == True:
-        #Aktuelle Person hat jemanden in ihrer like_list
-        if len(hate_list[l]) > 0:
-            name = personenliste[l]
-            zimmer = []
-            zimmernegativ = []
-            #Durchgehen aller Zimmer
-            for x in range(0, len(zimmerliste)):
-                #Beitritt bei jedem neuen Zimmer prinzipiell möglich, wird erst durch Abfrage unmöglich
-                beitritt = True
-                #Druchgehen aller Namen der Zimmernegativliste
-                if name in zimmernegativliste[x]:
-                    #Name der Person in der Negativliste enthalten, Beitritt von Seiten des
-                    #Zimmers unmöglich --> widerspricht dem Wunsch einer der Personen im Zimmer
-                    beitritt = False
-                #Durchgehen der "Antiwünsche" der Person, wenn eine Person davon im Zimmer
-                #--> Beitritt scheitert
-                for k in hate_list[l]:
-                    #Wenn Name im Zimmer enthalten ist
-                    if k in zimmerliste[x]:
+        #Iteration durch eine sich verändernde Liste (keine for-Schleife möglich --> out of range)
+        while minus == True:
+            #Aktuelle Person hat jemanden in ihrer like_list
+            if len(hate_list[l]) > 0:
+                name = personenliste[l]
+                zimmer = []
+                zimmernegativ = []
+                #Durchgehen aller Zimmer
+                for x in range(0, len(zimmerliste)):
+                    #Beitritt bei jedem neuen Zimmer prinzipiell möglich, wird erst durch Abfrage unmöglich
+                    beitritt = True
+                    #Druchgehen aller Namen der Zimmernegativliste
+                    if name in zimmernegativliste[x]:
+                        #Name der Person in der Negativliste enthalten, Beitritt von Seiten des
+                        #Zimmers unmöglich --> widerspricht dem Wunsch einer der Personen im Zimmer
                         beitritt = False
-                if beitritt == True:
-                    #Person kann in aktuelles Zimmer eingefügt werden und aus der Liste entfernt werden
-                    #Person ins Zimmer
-                    zimmerliste[x].append(name)
-                    index = l
-                    zimmernegativ = zimmernegativliste[x]
-                    zimmernegativliste[x] = zimmer_negativliste(zimmernegativ, hate_list, index)
+                    #Durchgehen der "Antiwünsche" der Person, wenn eine Person davon im Zimmer
+                    #--> Beitritt scheitert
+                    for k in hate_list[l]:
+                        #Wenn Name im Zimmer enthalten ist
+                        if k in zimmerliste[x]:
+                            beitritt = False
+                    if beitritt == True:
+                        #Person kann in aktuelles Zimmer eingefügt werden und aus der Liste entfernt werden
+                        #Person ins Zimmer
+                        zimmerliste[x].append(name)
+                        index = l
+                        zimmernegativ = zimmernegativliste[x]
+                        zimmernegativliste[x] = zimmer_negativliste(zimmernegativ, hate_list, index)
+                        del personenliste[l]
+                        del hate_list[l]
+                        break #Zimmersuche kann beendet werden
+                #Durchlaufen aller Zimmer beendet
+                if beitritt == False:
+                    #kein passendes Zimmer gefunden --> Einzelzimmer
+                    zimmer = [name]
+                    zimmernegativ = hate_list[l]
+                    zimmerliste.append(zimmer)
+                    zimmernegativliste.append(zimmernegativ)
                     del personenliste[l]
                     del hate_list[l]
-                    break #Zimmersuche kann beendet werden
-            #Durchlaufen aller Zimmer beendet
-            if beitritt == False:
-                #kein passendes Zimmer gefunden --> Einzelzimmer
-                zimmer = [name]
-                zimmernegativ = hate_list[l]
-                zimmerliste.append(zimmer)
-                zimmernegativliste.append(zimmernegativ)
-                del personenliste[l]
-                del hate_list[l]
 
-            #Sonderfall: falls Ende der Liste, aber Person hat jemanden in ihrer -Liste
-            #wird diese entfernt und das Objekt aus der Liste gelöscht, der Iterationsindex ist somit
-            #größer als die Anzahl der Listenobjekte-1 und der Zeiger befindet sich außerhalb der Liste
-            #folgende if-Abfrage unterbindet einen "out of range"-Fehler
-            if l > (len(personenliste)-1):
+                #Sonderfall: falls Ende der Liste, aber Person hat jemanden in ihrer -Liste
+                #wird diese entfernt und das Objekt aus der Liste gelöscht, der Iterationsindex ist somit
+                #größer als die Anzahl der Listenobjekte-1 und der Zeiger befindet sich außerhalb der Liste
+                #folgende if-Abfrage unterbindet einen "out of range"-Fehler
+                if l > (len(personenliste)-1):
+                    minus = False
+                l = 0
+                #print(personenliste)
+
+            #Person hat niemanden in ihrer like_list und das Ende der Personenliste ist erreicht
+            #print("hello")
+            elif (len(hate_list[l]) == 0) and (l == (len(personenliste)-1)):
+                #or ((len(hate_list[l]) == 0) and (l == (len(personenliste)))
                 minus = False
-            l = 0
-            #print(personenliste)
+                print("hello")
+            #Keine Personen in like_list und noch kein Ende der Liste --> Erhöhung der
+            #Iterationsvariablen um 1
+            else:
+                l += 1
 
-        #Person hat niemanden in ihrer like_list und das Ende der Personenliste ist erreicht
-        #print("hello")
-        elif (len(hate_list[l]) == 0) and (l == (len(personenliste)-1)):
-            #or ((len(hate_list[l]) == 0) and (l == (len(personenliste)))
-            minus = False
-            print("hello")
-        #Keine Personen in like_list und noch kein Ende der Liste --> Erhöhung der
-        #Iterationsvariablen um 1
+        #----------------------------
+        #Bearbeitungschritt 3 - Vergabe aller Personen ohne Wünsche und ohne Leute in ihrer hate_list
+        #----------------------------
+        #Überprüfung der Zimmer auf ihre Negativlisten
+        machbar = zimmernegativtest(zimmerliste, zimmernegativliste, machbar)
+
+        if machbar == True:
+
+            #Variable für die Suche nach einem Zimmer in Schritt 3
+            gefunden = False
+
+            #solange noch Leute übrig sind
+            while len(personenliste) > 0:
+                #Durchgehen aller Zimmer, aktuelle Person ist immer die erste der Übrigen aus
+                #der Personenliste
+                name = personenliste[0]
+                zimmer = []
+                zimmernegativ = []
+                gefunden = False
+                for x in range(0, len(zimmerliste)):
+                    if name not in zimmernegativliste[x]:
+                        #Name nicht in der Negativliste enthalten --> Person kann in's Zimmer
+                        zimmerliste[x].append(name)
+                        #Person aus der Liste entfernen
+                        del personenliste[0]
+                        #Löschen ihrer Negativliste
+                        del hate_list[0]
+                        #Person hat keine Negativliste, die zum Zimmer hinzugefügt werden muss
+                        #Boolean auf True, da Zimmer gefunden wurde
+                        gefunden = True
+                        break #Zimmersuche für Person beendet
+                if gefunden == False:
+                    #kein passendes Zimmer gefunden, da der Anfangswert von False nicht auf True
+                    #wechselte --> Einzelzimmer
+                    zimmer = [name]
+                    zimmernegativ = []
+                    zimmerliste.append(zimmer)
+                    zimmernegativliste.append(zimmernegativ)
+                    del personenliste[0]
+                    del hate_list[0]
+
+            print(zimmerliste)
+            # print(zimmernegativliste)
         else:
-            l += 1
-
-    #----------------------------
-    #Bearbeitungschritt 3 - Vergabe aller Personen ohne Wünsche und ohne Leute in ihrer hate_list
-    #----------------------------
-
-    #Variable für die Suche nach einem Zimmer in Schritt 3
-    gefunden = False
-
-    #solange noch Leute übrig sind
-    while len(personenliste) > 0:
-        #Durchgehen aller Zimmer, aktuelle Person ist immer die erste der Übrigen aus
-        #der Personenliste
-        name = personenliste[0]
-        zimmer = []
-        zimmernegativ = []
-        gefunden = False
-        for x in range(0, len(zimmerliste)):
-            if name not in zimmernegativliste[x]:
-                #Name nicht in der Negativliste enthalten --> Person kann in's Zimmer
-                zimmerliste[x].append(name)
-                #Person aus der Liste entfernen
-                del personenliste[0]
-                #Löschen ihrer Negativliste
-                del hate_list[0]
-                #Person hat keine Negativliste, die zum Zimmer hinzugefügt werden muss
-                #Boolean auf True, da Zimmer gefunden wurde
-                gefunden = True
-                break #Zimmersuche für Person beendet
-        if gefunden == False:
-            #kein passendes Zimmer gefunden, da der Anfangswert von False nicht auf True
-            #wechselte --> Einzelzimmer
-            zimmer = [name]
-            zimmernegativ = []
-            zimmerliste.append(zimmer)
-            zimmernegativliste.append(zimmernegativ)
-            del personenliste[0]
-            del hate_list[0]
-
-
-
-
-
-
-    print(zimmerliste)
-    # print(zimmernegativliste)
+            print("Es können nicht alle Wünsche erfüllt werden.")
+    else:
+        print("Es können nicht alle Wünsche erfüllt werden.")
