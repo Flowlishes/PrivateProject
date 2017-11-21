@@ -227,6 +227,7 @@ if loesen == True:
     #Suche findet statt
     minus = True
     #Wenn die hate_list keine Leute mehr enthält, kann auch nach nichts gesucht werden
+    #--> Vermeidung von Lesefehlern
     if not hate_list:
         minus = False
 
@@ -286,7 +287,8 @@ if loesen == True:
 
         #Person hat niemanden in ihrer like_list und das Ende der Personenliste ist erreicht
         #print("hello")
-        elif ((len(hate_list[l]) == 0) and (l == (len(personenliste)-1))) or ((len(hate_list[l]) == 0) and (l == (len(personenliste)))):
+        elif (len(hate_list[l]) == 0) and (l == (len(personenliste)-1)):
+            #or ((len(hate_list[l]) == 0) and (l == (len(personenliste)))
             minus = False
             print("hello")
         #Keine Personen in like_list und noch kein Ende der Liste --> Erhöhung der
