@@ -4,7 +4,7 @@
 '''
     File name: 1-Main.py
     Date created: 19/11/2017
-    Date last modified: 19/11/2017
+    Date last modified: 26/11/2017
     Python version: 3.5
 '''
 
@@ -257,7 +257,7 @@ if loesen == True:
 
         #Iteration durch eine sich verändernde Liste (keine for-Schleife möglich --> out of range)
         while minus == True:
-            #Aktuelle Person hat jemanden in ihrer like_list
+            #Aktuelle Person hat jemanden in ihrer hate_list
             if len(hate_list[l]) > 0:
                 name = personenliste[l]
                 zimmer = []
@@ -306,12 +306,9 @@ if loesen == True:
                 l = 0
                 #print(personenliste)
 
-            #Person hat niemanden in ihrer like_list und das Ende der Personenliste ist erreicht
-            #print("hello")
+            #Person hat niemanden in ihrer hate_list und das Ende der Personenliste ist erreicht
             elif (len(hate_list[l]) == 0) and (l == (len(personenliste)-1)):
-                #or ((len(hate_list[l]) == 0) and (l == (len(personenliste)))
                 minus = False
-                print("hello")
             #Keine Personen in like_list und noch kein Ende der Liste --> Erhöhung der
             #Iterationsvariablen um 1
             else:
@@ -320,47 +317,41 @@ if loesen == True:
         #----------------------------
         #Bearbeitungschritt 3 - Vergabe aller Personen ohne Wünsche und ohne Leute in ihrer hate_list
         #----------------------------
-        #Überprüfung der Zimmer auf ihre Negativlisten
-        machbar = zimmernegativtest(zimmerliste, zimmernegativliste, machbar)
 
-        if machbar == True:
 
-            #Variable für die Suche nach einem Zimmer in Schritt 3
+        #Variable für die Suche nach einem Zimmer in Schritt 3
+        gefunden = False
+
+        #solange noch Leute übrig sind
+        while len(personenliste) > 0:
+            #Durchgehen aller Zimmer, aktuelle Person ist immer die erste der Übrigen aus
+            #der Personenliste
+            name = personenliste[0]
+            zimmer = []
+            zimmernegativ = []
             gefunden = False
-
-            #solange noch Leute übrig sind
-            while len(personenliste) > 0:
-                #Durchgehen aller Zimmer, aktuelle Person ist immer die erste der Übrigen aus
-                #der Personenliste
-                name = personenliste[0]
-                zimmer = []
-                zimmernegativ = []
-                gefunden = False
-                for x in range(0, len(zimmerliste)):
-                    if name not in zimmernegativliste[x]:
-                        #Name nicht in der Negativliste enthalten --> Person kann in's Zimmer
-                        zimmerliste[x].append(name)
-                        #Person aus der Liste entfernen
-                        del personenliste[0]
-                        #Löschen ihrer Negativliste
-                        del hate_list[0]
-                        #Person hat keine Negativliste, die zum Zimmer hinzugefügt werden muss
-                        #Boolean auf True, da Zimmer gefunden wurde
-                        gefunden = True
-                        break #Zimmersuche für Person beendet
-                if gefunden == False:
-                    #kein passendes Zimmer gefunden, da der Anfangswert von False nicht auf True
-                    #wechselte --> Einzelzimmer
-                    zimmer = [name]
-                    zimmernegativ = []
-                    zimmerliste.append(zimmer)
-                    zimmernegativliste.append(zimmernegativ)
+            for x in range(0, len(zimmerliste)):
+                if name not in zimmernegativliste[x]:
+                    #Name nicht in der Negativliste enthalten --> Person kann in's Zimmer
+                    zimmerliste[x].append(name)
+                    #Person aus der Liste entfernen
                     del personenliste[0]
+                    #Löschen ihrer Negativliste
                     del hate_list[0]
-
-            print(zimmerliste)
-            # print(zimmernegativliste)
-        else:
-            print("Es können nicht alle Wünsche erfüllt werden.")
+                    #Person hat keine Negativliste, die zum Zimmer hinzugefügt werden muss
+                    #Boolean auf True, da Zimmer gefunden wurde
+                    gefunden = True
+                    break #Zimmersuche für Person beendet
+            if gefunden == False:
+                #kein passendes Zimmer gefunden, da der Anfangswert von False nicht auf True
+                #wechselte --> Einzelzimmer
+                zimmer = [name]
+                zimmernegativ = []
+                zimmerliste.append(zimmer)
+                zimmernegativliste.append(zimmernegativ)
+                del personenliste[0]
+                del hate_list[0]
+        for q in zimmerliste:
+            print(q)
     else:
         print("Es können nicht alle Wünsche erfüllt werden.")
